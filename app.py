@@ -4,6 +4,9 @@ import pygame as pg
 class Application:
 
     def __init__(self):
+        """
+        Инициализация графического приложения
+        """
         pg.init()
         self.width, self.height = 800, 600
         self.screen = pg.display.set_mode((self.width, self.height))
@@ -37,4 +40,4 @@ class Application:
                 break
             pg.draw.rect(self.screen, cur_color, (norm_x * index, norm_y,
                                                   norm_w, norm_h))
-
+            pg.display.update()
