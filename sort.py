@@ -3,11 +3,9 @@ from typing import Optional, Callable
 from app import *
 
 
-def count_leonardo_numb(numb):
+def cnt_leo_numb(num):
     """Функция для вычисления числа Леонардо"""
-    if numb < 2:
-        return 1
-    return count_leonardo_numb(numb - 1) + count_leonardo_numb(numb - 2) + 1
+    return 1 if num < 2 else cnt_leo_numb(num - 1) + cnt_leo_numb(num - 2) + 1
 
 
 def smooth_sort(array: list, reverse: bool = False,
@@ -39,16 +37,15 @@ def smooth_sort(array: list, reverse: bool = False,
                     size_list.append(0)
                 else:
                     size_list.append(1)
-            idx, size_idx = fix_roots(arr, size_list, heap_end,
-                                      len(size_list) - 1)
-            sift_down(arr, idx, size_list[size_idx])
+            ida, size = fix_roots(arr, size_list, heap_end, len(size_list) - 1)
+            sift_down(arr, ida, size_list[size])
 
     def sift_down(heap: list, root_idx: int, tree_size: int):
         """Просеивание кучи"""
         cur = root_idx
         while tree_size > 1:
             right = cur - 1
-            left = cur - 1 - count_leonardo_numb(tree_size - 2)
+            left = cur - 1 - cnt_leo_numb(tree_size - 2)
             if cmp(key(heap[left]), key(heap[cur])) != reverse and \
                     cmp(key(heap[right]), key(heap[cur])) != reverse:
                 break
@@ -67,12 +64,12 @@ def smooth_sort(array: list, reverse: bool = False,
         cur = start_heap_idx
         size_cur = start_size_idx
         while size_cur > 0:
-            next_i = cur - count_leonardo_numb(sizes[size_cur])
+            next_i = cur - cnt_leo_numb(sizes[size_cur])
             if cmp(key(heap[next_i]), key(heap[cur])) != reverse:
                 break
             if sizes[size_cur] > 1:
                 right = cur - 1
-                left = right - count_leonardo_numb(sizes[size_cur] - 2)
+                left = right - cnt_leo_numb(sizes[size_cur] - 2)
                 if cmp(key(heap[next_i]), key(heap[right])) != reverse or \
                         cmp(key(heap[next_i]), key(heap[left])) != reverse:
                     break
@@ -85,13 +82,12 @@ def smooth_sort(array: list, reverse: bool = False,
 
     create_heap(array)
     for heap_size in range(len(array) - 1, -1, -1):
-        print(array)
-        application.draw_array_col(array, 100, 100, heap_size)
+        # application.draw_array_col(array, 100, 100, heap_size)
         removed_size = size_list.pop()
         if removed_size > 1:
             size_list.append(removed_size - 1)
             size_list.append(removed_size - 2)
-            left_idx = heap_size - count_leonardo_numb(size_list[-1]) - 1
+            left_idx = heap_size - cnt_leo_numb(size_list[-1]) - 1
             right_idx = heap_size - 1
             left_size_idx = len(size_list) - 2
             right_size_idx = len(size_list) - 1
