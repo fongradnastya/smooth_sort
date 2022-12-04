@@ -1,17 +1,27 @@
 import time
 
 import pygame as pg
+from PIL import Image
 
 
 class Application:
 
-    def __init__(self, max_value, length, gif=None):
+    class GifCreator:
+        def __init__(self, width, height):
+            self.frames = []
+            self.frames_cnt = 0
+
+    def __init__(self, max_value, length, gif=False):
         """
         Инициализация графического приложения
         """
         pg.init()
         self._width, self._height = 800, 600
         self._max_value = max_value
+        if gif:
+            self._gif = self.GifCreator(self._width, self._height)
+        else:
+            self._gif = None
         self._length = length
         self.screen = pg.display.set_mode((self._width, self._height))
         pg.display.set_caption("MergeSort visualize")
@@ -45,4 +55,15 @@ class Application:
             pg.draw.rect(self.screen, cur_color, (norm_x * index, norm_y,
                                                   norm_w, norm_h))
             pg.display.update()
+            if self._gif:
+                self._add_frame(pg.image.tostring(self.screen, "RGBA"))
         time.sleep(0.1)
+
+    def create_gif(self):
+        pass
+
+    def _add_frame(self, data):
+        image = Image.frombytes("RGBA", (self._width, self._height), data)
+        self._gif.frames_cnt += 1
+        self._gif.frames.append(image)
+

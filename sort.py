@@ -21,8 +21,6 @@ def smooth_sort(array: list, reverse: bool = False,
     key = key if key is not None else lambda x: x
     cmp = cmp if cmp is not None else lambda x, y: x < y
     size_list = []
-    if not array:
-        return None
 
     def create_heap(arr: list) -> None:
         """Создание сортировочной кучи"""
