@@ -1,6 +1,5 @@
 import random
 from typing import Optional, Callable
-from app import *
 
 
 def cnt_leo_numb(num):
@@ -10,7 +9,7 @@ def cnt_leo_numb(num):
 
 def smooth_sort(array: list, reverse: bool = False,
                 key: Optional[Callable] = None,
-                cmp: Optional[Callable] = None) -> list:
+                cmp: Optional[Callable] = None) -> Optional[list]:
     """
     Реализация алгоритма плавной сортировки
     @param array: список значений для сортировки
@@ -22,7 +21,8 @@ def smooth_sort(array: list, reverse: bool = False,
     key = key if key is not None else lambda x: x
     cmp = cmp if cmp is not None else lambda x, y: x < y
     size_list = []
-    application = Application()
+    if not array:
+        return None
 
     def create_heap(arr: list) -> None:
         """Создание сортировочной кучи"""
@@ -51,10 +51,12 @@ def smooth_sort(array: list, reverse: bool = False,
                 break
             elif cmp(key(heap[left]), key(heap[right])) != reverse:
                 heap[cur], heap[right] = heap[right], heap[cur]
+
                 cur = right
                 tree_size = tree_size - 2
             else:
                 heap[cur], heap[left] = heap[left], heap[cur]
+
                 cur = left
                 tree_size = tree_size - 1
 
@@ -82,7 +84,6 @@ def smooth_sort(array: list, reverse: bool = False,
 
     create_heap(array)
     for heap_size in range(len(array) - 1, -1, -1):
-        # application.draw_array_col(array, 100, 100, heap_size)
         removed_size = size_list.pop()
         if removed_size > 1:
             size_list.append(removed_size - 1)
