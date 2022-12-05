@@ -64,7 +64,7 @@ def graphic_sort(array: list, reverse: bool, graphic=False, gif: bool = False):
             right = cur - 1
             left = cur - 1 - cnt_leo_numb(tree_size - 2)
             if application:
-                application.draw_array_col(array, cur)
+                application.draw_array(array, cur)
             if (heap[left] < heap[cur] != reverse) and \
                     (heap[right] < heap[cur] != reverse):
                 break
@@ -103,7 +103,7 @@ def graphic_sort(array: list, reverse: bool, graphic=False, gif: bool = False):
     create_heap(array)
     for heap_size in range(len(array) - 1, -1, -1):
         if application:
-            application.draw_array_col(array, heap_size)
+            application.draw_array(array, heap_size)
         removed_size = size_list.pop()
         if removed_size > 1:
             size_list.append(removed_size - 1)
