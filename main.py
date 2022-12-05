@@ -3,7 +3,7 @@ import random
 from app import *
 
 
-def started_parser():
+def pars_arguments():
     """
     Инициализация парсинга аргументов командной строки
     """
@@ -22,18 +22,19 @@ def started_parser():
                         help='show sorting graphic')
     parser.add_argument("--gif", "-g", action='store_true', help="create gif")
     args = parser.parse_args()
-    print(args)
-    parse_arguments(args)
+    return args
 
 
 def graphic_sort(array: list, reverse: bool, graphic=False, gif: bool = False):
     size_list = []
     if graphic:
-        application = Application(max(array), len(array), gif)
+        application = Application(min(array), max(array), len(array), gif)
     else:
         application = None
     if not array:
         return None
+    key = lambda x: x
+    cmp = lambda x, y: x < y
 
     def cnt_leo_numb(num):
         """Функция для вычисления числа Леонардо"""
@@ -53,8 +54,7 @@ def graphic_sort(array: list, reverse: bool, graphic=False, gif: bool = False):
                     size_list.append(0)
                 else:
                     size_list.append(1)
-            ida, size = fix_roots(arr, size_list, heap_end,
-                                  len(size_list) - 1)
+            ida, size = fix_roots(arr, size_list, heap_end, len(size_list) - 1)
             sift_down(arr, ida, size_list[size])
 
     def sift_down(heap: list, root_idx: int, tree_size: int):
@@ -65,11 +65,12 @@ def graphic_sort(array: list, reverse: bool, graphic=False, gif: bool = False):
             left = cur - 1 - cnt_leo_numb(tree_size - 2)
             if application:
                 application.draw_array(array, cur)
-            if (heap[left] < heap[cur] != reverse) and \
-                    (heap[right] < heap[cur] != reverse):
+            if cmp(key(heap[left]), key(heap[cur])) != reverse and \
+                    cmp(key(heap[right]), key(heap[cur])) != reverse:
                 break
-            elif heap[left] < heap[right] != reverse:
+            elif cmp(key(heap[left]), key(heap[right])) != reverse:
                 heap[cur], heap[right] = heap[right], heap[cur]
+
                 cur = right
                 tree_size = tree_size - 2
             else:
@@ -85,13 +86,13 @@ def graphic_sort(array: list, reverse: bool, graphic=False, gif: bool = False):
         size_cur = start_size_idx
         while size_cur > 0:
             next_i = cur - cnt_leo_numb(sizes[size_cur])
-            if heap[next_i] < heap[cur] != reverse:
+            if cmp(key(heap[next_i]), key(heap[cur])) != reverse:
                 break
             if sizes[size_cur] > 1:
                 right = cur - 1
                 left = right - cnt_leo_numb(sizes[size_cur] - 2)
-                if heap[next_i] < heap[right] != reverse or \
-                        heap[next_i] < heap[left] != reverse:
+                if cmp(key(heap[next_i]), key(heap[right])) != reverse or \
+                        cmp(key(heap[next_i]), key(heap[left])) != reverse:
                     break
             temp = heap[cur]
             heap[cur] = heap[next_i]
@@ -126,7 +127,7 @@ def graphic_sort(array: list, reverse: bool, graphic=False, gif: bool = False):
 def create_random_list(length: int) -> list:
     random_list = []
     for i in range(length):
-        random_list.append(random.randint(1, 1000))
+        random_list.append(random.randint(-1000, 1000))
     return random_list
 
 
@@ -146,12 +147,12 @@ def write_to_file(file_name: str, sorted_array: list):
         file.write("\nSorted: " + str(sorted_array))
 
 
-def parse_arguments(args) -> int:
+def main() -> int:
     """
     Получение и проверка аргументов командной строки
-    @param args: аргументы командной строки
     @return: 0 - если нет аргументов, 1 - если ошибка, 2 - если корректно
     """
+    args = pars_arguments()
     if args.random:
         if args.random > 0:
             array = create_random_list(args.random)
@@ -177,8 +178,8 @@ def parse_arguments(args) -> int:
     print(sorted_array)
     if args.file:
         write_to_file(args.file, sorted_array)
-    return 2
+    return 0
 
 
 if __name__ == "__main__":
-    started_parser()
+    main()

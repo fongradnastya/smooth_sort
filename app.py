@@ -22,12 +22,13 @@ class Application:
                 path = f"{self.directory}\\gif{self.gif_number}.gif"
             return path
 
-    def __init__(self, max_value, length, gif=False):
+    def __init__(self, min_value, max_value, length, gif=False):
         """
         Инициализация графического приложения
         """
         pg.init()
         self._width, self._height = 800, 600
+        self._min_value = min_value
         self._max_value = max_value
         self._gif = None
         if gif:
@@ -38,14 +39,6 @@ class Application:
         self.bg_color = (255, 200, 200)
         self.screen.fill(self.bg_color)
 
-    @property
-    def max_value(self):
-        return self._max_value
-
-    @max_value.setter
-    def max_value(self, max_value):
-        self._max_value = max_value
-
     def draw_array(self, array: list, red: int):
         """
         Отрисовка нового состояния массива
@@ -54,10 +47,15 @@ class Application:
         """
         norm_x = self._width / self._length
         norm_w = norm_x if norm_x > 1 else 1
-        h_caf = (self._height - 100) / self.max_value
+        h_caf = (self._height - 100) / (self._max_value - self._min_value)
         for index, value in enumerate(array):
-            norm_h = value * h_caf
-            norm_y = self._height - norm_h
+            norm_h = abs(value) * h_caf
+            zero_h = self._count_zero_height()
+            if value > 0:
+                norm_y = self._height - norm_h - (self._height - zero_h)
+            else:
+                norm_y = zero_h
+                print(norm_y)
             if index != red:
                 if index % 2:
                     cur_color = (140, 140, 140)
@@ -69,10 +67,19 @@ class Application:
                 norm_x * index, 0, norm_w, self._height))
             pg.draw.rect(self.screen, cur_color, (norm_x * index, norm_y,
                                                   norm_w, norm_h))
+
+            pg.draw.line(self.screen, (255, 255, 255),
+                         (0, zero_h), (self._width, zero_h), 2)
             pg.display.update()
         if self._gif:
             self._add_frame(pg.image.tostring(self.screen, "RGBA"))
         pg.time.wait(50)
+
+    def _count_zero_height(self):
+        h_caf = (self._height - 100) / (self._max_value - self._min_value)
+        norm_min = self._min_value * h_caf
+        zero_h = self._height - 1 + norm_min
+        return zero_h
 
     def _add_frame(self, data):
         image = Image.frombytes("RGBA", (self._width, self._height), data)
