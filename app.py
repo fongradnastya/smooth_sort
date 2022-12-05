@@ -3,7 +3,7 @@ import pygame as pg
 from PIL import Image
 
 
-class Application:
+class SortVisualize:
 
     class GifCreator:
         def __init__(self, directory="gif"):
@@ -55,7 +55,6 @@ class Application:
                 norm_y = self._height - norm_h - (self._height - zero_h)
             else:
                 norm_y = zero_h
-                print(norm_y)
             if index != red:
                 if index % 2:
                     cur_color = (140, 140, 140)
@@ -96,7 +95,8 @@ class Application:
                                  optimize=True,
                                  duration=100,
                                  loop=0)
-        print(f"Gif was successfully saved in {self._gif.directory} directory")
+        print(f"Gif was successfully saved "
+              f"in '{self._gif.directory}' directory")
         self._gif.frames[0].close()
         self._gif.frames.clear()
         self._gif.frames_count = 0

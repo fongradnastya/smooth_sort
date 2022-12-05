@@ -1,26 +1,19 @@
-import random
 from typing import Optional, Callable
 
 
-def cnt_leo_numb(num):
-    """Функция для вычисления числа Леонардо"""
-    return 1 if num < 2 else cnt_leo_numb(num - 1) + cnt_leo_numb(num - 2) + 1
-
-
-def smooth_sort(array: list, reverse: bool = False,
-                key: Optional[Callable] = None,
-                cmp: Optional[Callable] = None) -> Optional[list]:
-    """
-    Реализация алгоритма плавной сортировки
-    @param array: список значений для сортировки
-    @param reverse: требуется ли отсортировать по возрастанию или убыванию
-    @param key: функция вычисления порядка сортировки для элемента
-    @param cmp: функция сравнения двух элементов списка
-    @return:
-    """
+def sort(array: list, reverse: bool = False, key: Optional[Callable] = None,
+         cmp: Optional[Callable] = None, visualize=None,
+         gif: Optional[bool] = False):
+    size_list = []
+    if not array:
+        array = []
     key = key if key is not None else lambda x: x
     cmp = cmp if cmp is not None else lambda x, y: x < y
-    size_list = []
+
+    def cnt_leo_numb(num):
+        """Функция для вычисления числа Леонардо"""
+        return 1 if num < 2 else cnt_leo_numb(num - 1) + cnt_leo_numb(
+            num - 2) + 1
 
     def create_heap(arr: list) -> None:
         """Создание сортировочной кучи"""
@@ -44,17 +37,17 @@ def smooth_sort(array: list, reverse: bool = False,
         while tree_size > 1:
             right = cur - 1
             left = cur - 1 - cnt_leo_numb(tree_size - 2)
+            if visualize:
+                visualize.draw_array(array, cur)
             if cmp(key(heap[left]), key(heap[cur])) != reverse and \
                     cmp(key(heap[right]), key(heap[cur])) != reverse:
                 break
             elif cmp(key(heap[left]), key(heap[right])) != reverse:
                 heap[cur], heap[right] = heap[right], heap[cur]
-
                 cur = right
                 tree_size = tree_size - 2
             else:
                 heap[cur], heap[left] = heap[left], heap[cur]
-
                 cur = left
                 tree_size = tree_size - 1
 
@@ -82,6 +75,8 @@ def smooth_sort(array: list, reverse: bool = False,
 
     create_heap(array)
     for heap_size in range(len(array) - 1, -1, -1):
+        if visualize:
+            visualize.draw_array(array, heap_size)
         removed_size = size_list.pop()
         if removed_size > 1:
             size_list.append(removed_size - 1)
@@ -96,12 +91,6 @@ def smooth_sort(array: list, reverse: bool = False,
             idx, size_idx = fix_roots(array, size_list, right_idx,
                                       right_size_idx)
             sift_down(array, idx, size_list[size_idx])
+    if visualize and gif:
+        visualize.create_gif()
     return array
-
-
-if __name__ == "__main__":
-    data = []
-    for i in range(0, 100):
-        data.append(random.randint(1, 100))
-    sorted_arr = smooth_sort(data)
-    print(sorted_arr)

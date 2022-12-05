@@ -35,14 +35,14 @@ class TestSort(unittest.TestCase):
         """Тест функции сортировки числовых данных по возрастанию"""
         for data in TEST_NUMBER:
             with self.subTest():
-                self.assertEqual(sort.smooth_sort(data), sorted(data))
+                self.assertEqual(sort.sort(data), sorted(data))
 
     def test_sort_number_decrease(self):
         """Тест функции сортировки числовых данных по невозрастанию"""
         for data in TEST_NUMBER:
             with self.subTest():
                 self.assertEqual(
-                    sort.smooth_sort(data, reverse=True),
+                    sort.sort(data, reverse=True),
                     sorted(data, reverse=True)
                 )
 
@@ -50,13 +50,13 @@ class TestSort(unittest.TestCase):
         """Тест функции сортировки строковых данных по возрастанию"""
         for data in TEST_STR:
             with self.subTest():
-                self.assertEqual(sort.smooth_sort(data), sorted(data))
+                self.assertEqual(sort.sort(data), sorted(data))
 
     def test_sort_str_decrease(self):
         """Тест функции сортировки строковых данных по невозрастанию"""
         for data in TEST_STR:
             with self.subTest():
                 self.assertEqual(
-                    sort.smooth_sort(data, reverse=True),
+                    sort.sort(data, reverse=True),
                     sorted(data, reverse=True)
                 )
