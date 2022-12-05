@@ -6,7 +6,8 @@ from sort import sort
 
 def pars_arguments():
     """
-    Инициализация парсинга аргументов командной строки
+    Парсинг аргументов командной строки
+    @return: считанные аргументы командной строки
     """
     parser = argparse.ArgumentParser(description="collection of parameters")
     group = parser.add_mutually_exclusive_group(required=True)
@@ -27,13 +28,23 @@ def pars_arguments():
 
 
 def create_random_list(length: int) -> list:
+    """
+    Создание списка случайных значений
+    @param length: требуемая длина списка
+    @return: созданный список
+    """
     random_list = []
     for i in range(length):
         random_list.append(random.randint(-1000, 1000))
     return random_list
 
 
-def read_from_file(file_name: str):
+def read_from_file(file_name: str) -> list:
+    """
+    Считывание числовой последовательности из файла
+    @param file_name: имя файла для чтения
+    @return: считанная последовательность чисел
+    """
     data = []
     with open(file_name) as file:
         try:
@@ -44,15 +55,10 @@ def read_from_file(file_name: str):
     return data
 
 
-def write_to_file(sorted_array: list, file_name: str = "output.txt"):
-    with open(file_name, 'w') as file:
-        file.write("Sorted: " + str(sorted_array))
-
-
 def main() -> int:
     """
-    Получение и проверка аргументов командной строки
-    @return: 0 - если нет аргументов, 1 - если ошибка, 2 - если корректно
+    Точка входа в программу
+    @return: 0 - сортировка прошла корректно, 1 - код завершился с ошибкой
     """
     args = pars_arguments()
     if args.random:
@@ -72,18 +78,27 @@ def main() -> int:
             return 1
     elif args.strings:
         array = args.strings
+        if args.graph or args.gif:
+            print("Please, enter integer values to see a diagram")
+            print("Impossible to visualize string list")
+            return 1
     else:
         array = args.digits
     if not args.graph and args.gif:
         args.graph = True
     print("Initial array: ", end="")
     print(array)
-    visualize = SortVisualize(min(array), max(array), len(array), args.gif)
-    sorted_array = sort(array, args.reverse, visualize=visualize, gif=args.gif)
-    print("Sorted: ", end="")
+    if args.graph:
+        visualize = SortVisualize(min(array), max(array), len(array), args.gif)
+        sorted_array = sort(array, args.reverse, visualize=visualize,
+                            gif=args.gif)
+    else:
+        sorted_array = sort(array, args.reverse)
+    print("Sorted array: ", end="")
     print(sorted_array)
     if args.file:
-        write_to_file(sorted_array)
+        with open("output.txt", 'w') as file:
+            file.write("Sorted: " + str(sorted_array))
     return 0
 
 

@@ -4,16 +4,30 @@ from PIL import Image
 
 
 class SortVisualize:
-
+    """
+    Класс для визуализации сортировки
+    """
     class GifCreator:
+        """
+        Класс для хранения информации о создаваемой гифке
+        """
         def __init__(self, directory="gif"):
+            """
+            Инициализация новой гифки
+            @param directory: директория для сохранения гифки
+            """
             self.directory = ""
             self.frames = []
             self.frames_cnt = 0
             self.gif_number = 1
-            self.path = self.create_path(directory)
+            self.path = self._create_path(directory)
 
-        def create_path(self, directory):
+        def _create_path(self, directory):
+            """
+            Создание относительного пути до гифки
+            @param directory: директория, в которую планируется сохранение
+            @return: относительный путь до гифки
+            """
             if os.path.exists(directory):
                 self.directory = directory
             path = f"{self.directory}\\gif{self.gif_number}.gif"
@@ -24,11 +38,15 @@ class SortVisualize:
 
     def __init__(self, min_value, max_value, length, gif=False):
         """
-        Инициализация графического приложения
+        Инициализация визуализатора сортировки
+        @param min_value: минимальное значение сортируемого массива
+        @param max_value: максимальное значение сортируемого массива
+        @param length: длина сортируемого массива
+        @param gif: нужно ли сохранить визуализацию в гифке
         """
         pg.init()
         self._width, self._height = 800, 600
-        self._min_value = min_value
+        self._min_value = int(min_value)
         self._max_value = max_value
         self._gif = None
         if gif:
@@ -57,13 +75,19 @@ class SortVisualize:
                 norm_y = zero_h
             if index != red:
                 if index % 2:
-                    cur_color = (140, 140, 140)
+                    cur_color = (140, 140, 200)
                 else:
-                    cur_color = (160, 160, 160)
+                    cur_color = (160, 160, 220)
             else:
                 cur_color = (255, 0, 0)
             pg.draw.rect(self.screen, self.bg_color, (
                 norm_x * index, 0, norm_w, self._height))
+            if value > 0:
+                sqrt_y = norm_y - norm_w
+            else:
+                sqrt_y = norm_y + norm_h
+            pg.draw.rect(self.screen, (255, 255, 255),
+                         (norm_x * index, sqrt_y, norm_w, norm_w))
             pg.draw.rect(self.screen, cur_color, (norm_x * index, norm_y,
                                                   norm_w, norm_h))
 
@@ -75,19 +99,28 @@ class SortVisualize:
         pg.time.wait(50)
 
     def _count_zero_height(self):
+        """
+        Вычисление числа пикселей, которому соответствует нулевое значение
+        графика
+        @return: высота в пикселях
+        """
         h_caf = (self._height - 100) / (self._max_value - self._min_value)
         norm_min = self._min_value * h_caf
         zero_h = self._height - 1 + norm_min
         return zero_h
 
     def _add_frame(self, data):
+        """
+        Добавляет новый кадр в гифку
+        @param data: строковое представление сохраняемого изображения
+        """
         image = Image.frombytes("RGBA", (self._width, self._height), data)
         self._gif.frames_cnt += 1
         self._gif.frames.append(image)
 
     def create_gif(self):
         """
-        Метод сохранения гифки в директорию
+        Создание гифки и сохранение её в директории
         """
         print("Please, wait, started gif creation")
         self._gif.frames[0].save(self._gif.path, save_all=True,

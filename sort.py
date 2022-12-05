@@ -4,6 +4,16 @@ from typing import Optional, Callable
 def sort(array: list, reverse: bool = False, key: Optional[Callable] = None,
          cmp: Optional[Callable] = None, visualize=None,
          gif: Optional[bool] = False):
+    """
+    Реализация алгоритма плавной сортировки
+    @param array: список значений для сортировки
+    @param reverse: требуется ли отсортировать по возрастанию или убыванию
+    @param key: функция вычисления порядка сортировки для элемента
+    @param cmp: функция сравнения двух элементов списка
+    @param visualize: объект класса SortVisualize
+    @param gif: нужно ли сохранить результат работы в качестве гифки
+    @return: отсортированный список
+    """
     size_list = []
     if not array:
         array = []
@@ -53,7 +63,7 @@ def sort(array: list, reverse: bool = False, key: Optional[Callable] = None,
 
     def fix_roots(heap: list, sizes: list, start_heap_idx: int,
                   start_size_idx: int):
-        """Добавление нового элемента"""
+        """Изменение списка сортировочных куч"""
         cur = start_heap_idx
         size_cur = start_size_idx
         while size_cur > 0:
