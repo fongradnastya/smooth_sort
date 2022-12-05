@@ -84,14 +84,24 @@ def main() -> int:
             return 1
     else:
         array = args.digits
+    if not array:
+        print("There are no values to sort")
+        return 1
     if not args.graph and args.gif:
         args.graph = True
     print("Initial array: ", end="")
     print(array)
     if args.graph:
+        run = True
         visualize = SortVisualize(min(array), max(array), len(array), args.gif)
         sorted_array = sort(array, args.reverse, visualize=visualize,
                             gif=args.gif)
+        while run:
+            pg.display.update()
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    pg.quit()
+                    run = False
     else:
         sorted_array = sort(array, args.reverse)
     print("Sorted array: ", end="")

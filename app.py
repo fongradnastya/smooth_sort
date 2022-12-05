@@ -65,10 +65,13 @@ class SortVisualize:
         """
         norm_x = self._width / self._length
         norm_w = norm_x if norm_x > 1 else 1
-        h_caf = (self._height - 100) / (self._max_value - self._min_value)
+        if self._max_value != self._min_value:
+            h_caf = (self._height - 200) / (self._max_value - self._min_value)
+        else:
+            h_caf = self._height - 100
         for index, value in enumerate(array):
             norm_h = abs(value) * h_caf
-            zero_h = self._count_zero_height()
+            zero_h = self._count_zero_height(h_caf)
             if value > 0:
                 norm_y = self._height - norm_h - (self._height - zero_h)
             else:
@@ -82,15 +85,12 @@ class SortVisualize:
                 cur_color = (255, 0, 0)
             pg.draw.rect(self.screen, self.bg_color, (
                 norm_x * index, 0, norm_w, self._height))
-            if value > 0:
-                sqrt_y = norm_y - norm_w
-            else:
-                sqrt_y = norm_y + norm_h
+            sqrt_h = norm_w if norm_w < 80 else 80
+            sqrt_y = norm_y - sqrt_h if value > 0 else norm_y + norm_h
             pg.draw.rect(self.screen, (255, 255, 255),
-                         (norm_x * index, sqrt_y, norm_w, norm_w))
+                         (norm_x * index, sqrt_y, norm_w, sqrt_h))
             pg.draw.rect(self.screen, cur_color, (norm_x * index, norm_y,
                                                   norm_w, norm_h))
-
             pg.draw.line(self.screen, (255, 255, 255),
                          (0, zero_h), (self._width, zero_h), 2)
             pg.display.update()
@@ -98,15 +98,14 @@ class SortVisualize:
             self._add_frame(pg.image.tostring(self.screen, "RGBA"))
         pg.time.wait(50)
 
-    def _count_zero_height(self):
+    def _count_zero_height(self, h_caf):
         """
         Вычисление числа пикселей, которому соответствует нулевое значение
         графика
         @return: высота в пикселях
         """
-        h_caf = (self._height - 100) / (self._max_value - self._min_value)
         norm_min = self._min_value * h_caf
-        zero_h = self._height - 1 + norm_min
+        zero_h = self._height - 1 + norm_min - 50
         return zero_h
 
     def _add_frame(self, data):
