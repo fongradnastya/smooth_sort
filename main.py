@@ -1,7 +1,5 @@
 import argparse
-import os
 import random
-import sort
 from app import *
 
 
@@ -120,6 +118,8 @@ def graphic_sort(array: list, reverse: bool, graphic=False, gif: bool = False):
             idx, size_idx = fix_roots(array, size_list, right_idx,
                                       right_size_idx)
             sift_down(array, idx, size_list[size_idx])
+    if gif:
+        application.create_gif()
     return array
 
 
@@ -175,7 +175,6 @@ def parse_arguments(args) -> int:
         args.graph = True
     sorted_array = graphic_sort(array, args.reverse, args.graph, args.gif)
     print(sorted_array)
-
     if args.file:
         write_to_file(args.file, sorted_array)
     return 2

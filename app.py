@@ -1,5 +1,5 @@
 import time
-
+import os
 import pygame as pg
 from PIL import Image
 
@@ -7,9 +7,22 @@ from PIL import Image
 class Application:
 
     class GifCreator:
-        def __init__(self, width, height):
+        def __init__(self, directory="gif"):
+            self.directory = ""
             self.frames = []
             self.frames_cnt = 0
+            self.gif_number = 1
+            self.path = self.create_path(directory)
+
+        def create_path(self, directory):
+            if os.path.exists(directory):
+                self.directory = directory
+            path = f"{self.directory}\\gif{self.gif_number}.gif"
+            while os.path.exists(path):
+                self.gif_number += 1
+                path = f"{self.directory}\\gif{self.gif_number}.gif"
+            return path
+
 
     def __init__(self, max_value, length, gif=False):
         """
@@ -19,7 +32,7 @@ class Application:
         self._width, self._height = 800, 600
         self._max_value = max_value
         if gif:
-            self._gif = self.GifCreator(self._width, self._height)
+            self._gif = self.GifCreator()
         else:
             self._gif = None
         self._length = length
@@ -57,13 +70,23 @@ class Application:
             pg.display.update()
             if self._gif:
                 self._add_frame(pg.image.tostring(self.screen, "RGBA"))
-        time.sleep(0.1)
-
-    def create_gif(self):
-        pass
 
     def _add_frame(self, data):
         image = Image.frombytes("RGBA", (self._width, self._height), data)
         self._gif.frames_cnt += 1
         self._gif.frames.append(image)
 
+    def create_gif(self):
+        """
+        Метод сохранения гифки в директорию
+        """
+        self._gif.frames[0].save(self._gif.path, save_all=True,
+                                 append_images=self._gif.frames[1:],
+                                 optimize=True,
+                                 duration=20,
+                                 loop=1)
+        print(f"Gif was saved in {self._gif.directory} directory")
+        self._gif.frames[0].close()
+        self._gif.frames.clear()
+        self._gif.frames_count = 0
+        self._gif.gif_number += 1
